@@ -1,0 +1,42 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: productdb
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app123
+    ports:
+      - "${MYSQL_HOST_PORT:-3396}:3306"
+    volumes:
+      - dhbwrag_mysql_test_data:/var/lib/mysql
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_0900_ai_ci
+      --secure-file-priv=""
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -padmin123 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - dhbwrag_net
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "${ADMINER_HOST_PORT:-8980}:8080"
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    networks:
+      - dhbwrag_net
+
+volumes:
+  dhbwrag_mysql_test_data:
+
+networks:
+  dhbwrag_net:
+    driver: bridge
