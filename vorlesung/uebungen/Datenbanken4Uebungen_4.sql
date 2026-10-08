@@ -22,7 +22,7 @@ USE db_uebungen;
 -- Jeder Untertyp verwendet den Primaerschluessel des Obertyps zugleich
 -- als Primaer- und Fremdschluessel.
 -- -----------------------------------------------
-DROP TABLE IF EXISTS Studenten;
+DROP TABLE IF EXISTS StudentenIsA;
 DROP TABLE IF EXISTS Mitarbeiter;
 DROP TABLE IF EXISTS Personen;
 
@@ -32,7 +32,7 @@ CREATE TABLE Personen (
     EMail VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE Studenten (
+CREATE TABLE StudentenIsA (
     PersonenID INT PRIMARY KEY,
     Matrikelnummer INT NOT NULL UNIQUE,
     Studiengang VARCHAR(100) NOT NULL,
@@ -54,13 +54,13 @@ VALUES (2, 'Ben Fischer', 'ben.fischer@dhbw.de');
 INSERT INTO Personen (PersonenID, Name, EMail)
 VALUES (3, 'Clara Roth', 'clara.roth@dhbw.de');
 
-INSERT INTO Studenten (PersonenID, Matrikelnummer, Studiengang)
+INSERT INTO StudentenIsA (PersonenID, Matrikelnummer, Studiengang)
 VALUES (1, 10001, 'Informatik');
 INSERT INTO Mitarbeiter (PersonenID, Personalnummer, Abteilung)
 VALUES (2, 20001, 'IT-Service');
 
 -- Eine Person darf hier gleichzeitig Student und Mitarbeiter sein.
-INSERT INTO Studenten (PersonenID, Matrikelnummer, Studiengang)
+INSERT INTO StudentenIsA (PersonenID, Matrikelnummer, Studiengang)
 VALUES (3, 10002, 'Wirtschaftsinformatik');
 INSERT INTO Mitarbeiter (PersonenID, Personalnummer, Abteilung)
 VALUES (3, 20002, 'Bibliothek');
@@ -68,7 +68,7 @@ VALUES (3, 20002, 'Bibliothek');
 -- Anzeige aller Studenten mit ihren Daten aus dem Obertyp.
 SELECT p.PersonenID, p.Name, s.Matrikelnummer, s.Studiengang
 FROM Personen p
-JOIN Studenten s ON s.PersonenID = p.PersonenID;
+JOIN StudentenIsA s ON s.PersonenID = p.PersonenID;
 
 -- -----------------------------------------------
 -- Teil 2: is-part-of

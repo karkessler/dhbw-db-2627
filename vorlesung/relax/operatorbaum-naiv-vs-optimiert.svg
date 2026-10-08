@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">Naiver und optimierter Operatorbaum</title>
+  <desc id="description">Vergleich der Ausfuehrungsplaene fuer die Anfrage nach Professoren und Vorlesungen mit vier Semesterwochenstunden.</desc>
+  <style>
+    text { font-family: Arial, sans-serif; fill: #1f2937; }
+    .heading { font-size: 26px; font-weight: bold; }
+    .subtitle { font-size: 17px; fill: #4b5563; }
+    .panel { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+    .node { fill: #ffffff; stroke: #475569; stroke-width: 2; }
+    .selection { fill: #fef3c7; stroke: #d97706; stroke-width: 2; }
+    .join { fill: #dbeafe; stroke: #2563eb; stroke-width: 2; }
+    .projection { fill: #dcfce7; stroke: #16a34a; stroke-width: 2; }
+    .node-label { font-size: 17px; font-weight: bold; text-anchor: middle; }
+    .node-detail { font-size: 14px; text-anchor: middle; }
+    .leaf { font-size: 16px; font-weight: bold; text-anchor: middle; }
+    .arrow { stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrowhead); }
+    .note { font-size: 15px; fill: #374151; }
+    .emphasis { font-weight: bold; fill: #b45309; }
+  </style>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <text x="600" y="42" class="heading" text-anchor="middle">Operatorbaeume: naiver und optimierter Ausfuehrungsplan</text>
+  <text x="600" y="70" class="subtitle" text-anchor="middle">Anfrage: Professorname und Vorlesungstitel fuer Vorlesungen mit SWS = 4</text>
+
+  <rect x="35" y="100" width="545" height="545" rx="12" class="panel"/>
+  <text x="307" y="140" class="heading" text-anchor="middle">7a) Naiver Plan</text>
+  <text x="307" y="168" class="subtitle" text-anchor="middle">Join vor Selektion</text>
+
+  <rect x="160" y="205" width="295" height="64" rx="8" class="projection"/>
+  <text x="307" y="232" class="node-label">Projektion</text>
+  <text x="307" y="254" class="node-detail">p.Name, v.Titel</text>
+
+  <line x1="307" y1="269" x2="307" y2="318" class="arrow"/>
+  <rect x="160" y="328" width="295" height="64" rx="8" class="selection"/>
+  <text x="307" y="355" class="node-label">Selektion</text>
+  <text x="307" y="377" class="node-detail">v.SWS = 4</text>
+
+  <line x1="307" y1="392" x2="307" y2="441" class="arrow"/>
+  <rect x="160" y="451" width="295" height="58" rx="8" class="join"/>
+  <text x="307" y="477" class="node-label">Join</text>
+  <text x="307" y="497" class="node-detail">p.PersNr = v.gelesenVon</text>
+
+  <line x1="245" y1="509" x2="170" y2="564" class="arrow"/>
+  <line x1="370" y1="509" x2="445" y2="564" class="arrow"/>
+  <rect x="85" y="574" width="170" height="42" rx="8" class="node"/>
+  <text x="170" y="600" class="leaf">Professoren (p)</text>
+  <rect x="360" y="574" width="170" height="42" rx="8" class="node"/>
+  <text x="445" y="600" class="leaf">Vorlesungen (v)</text>
+
+  <rect x="620" y="100" width="545" height="545" rx="12" class="panel"/>
+  <text x="892" y="140" class="heading" text-anchor="middle">7b) Optimierter Plan</text>
+  <text x="892" y="168" class="subtitle" text-anchor="middle">Selektion vor Join</text>
+
+  <rect x="745" y="205" width="295" height="64" rx="8" class="projection"/>
+  <text x="892" y="232" class="node-label">Projektion</text>
+  <text x="892" y="254" class="node-detail">p.Name, v.Titel</text>
+
+  <line x1="892" y1="269" x2="892" y2="340" class="arrow"/>
+  <rect x="745" y="350" width="295" height="58" rx="8" class="join"/>
+  <text x="892" y="376" class="node-label">Join</text>
+  <text x="892" y="396" class="node-detail">p.PersNr = v.gelesenVon</text>
+
+  <line x1="830" y1="408" x2="755" y2="463" class="arrow"/>
+  <line x1="955" y1="408" x2="1030" y2="463" class="arrow"/>
+  <rect x="670" y="473" width="170" height="42" rx="8" class="node"/>
+  <text x="755" y="499" class="leaf">Professoren (p)</text>
+  <rect x="905" y="473" width="250" height="64" rx="8" class="selection"/>
+  <text x="1030" y="500" class="node-label">Selektion</text>
+  <text x="1030" y="522" class="node-detail">SWS = 4</text>
+
+  <line x1="1030" y1="537" x2="1030" y2="564" class="arrow"/>
+  <rect x="945" y="574" width="170" height="42" rx="8" class="node"/>
+  <text x="1030" y="600" class="leaf">Vorlesungen (v)</text>
+
+  <text x="600" y="685" class="note" text-anchor="middle">
+    Der optimierte Plan reduziert die Vorlesungen <tspan class="emphasis">vor</tspan> dem Join und verarbeitet dadurch weniger Tupel.
+  </text>
+</svg>

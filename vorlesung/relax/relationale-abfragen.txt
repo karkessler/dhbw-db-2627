@@ -1,0 +1,94 @@
+-- Basis-Abfragen zur Gruppe "DHBW Datenbanken, Teil 5: Relationale Algebra"
+-- Jede Abfrage einzeln in RelaX ausführen (dbis-uibk.github.io/relax)
+
+-- 1. Selektion
+-- 1a) Studenten im 5. Semester (3 Tupel)
+σ Semester = 5 (Studenten)
+-- 1b) Studenten ab dem 10. Semester (3 Tupel)
+σ Semester >= 10 (Studenten)
+-- 1c) Konjunktion: A < 5 und B = 'f' (2 Tupel)
+σ A < 5 ∧ B = 'f' (R)
+-- 1d) Disjunktion: B = 'c' oder C = 'V' (3 Tupel)
+σ B = 'c' ∨ C = 'V' (R)
+-- 1e) Ungleich: alle Tupel mit A ≠ 1 (5 Tupel)
+σ A ≠ 1 (R)
+
+-- 2. Projektion
+-- 2a) Name und Semester aller Studenten (9 Tupel)
+π Name, Semester (Studenten)
+-- 2b) Duplikate entfallen: nur 5 verschiedene Werte für B
+π B (R)
+-- 2c) Selektion und Projektion kombiniert (3 Namen)
+π Name (σ Semester = 5 (Studenten))
+-- 2d) Falsche Reihenfolge: Fehler, Semester fehlt nach der Projektion
+σ Semester = 5 (π Name (Studenten))
+
+-- 3. Kreuzprodukt
+-- 3a) RK × S (2 · 4 = 8 Tupel, 5 Attribute)
+RK ⨯ S
+-- 3b) Drei Relationen (2 · 2 · 2 = 8 Tupel)
+RK ⨯ T ⨯ U
+-- 3c) Kreuzprodukt mit Selektion ergibt einen Theta-Join (3 Tupel)
+σ A > D (RK ⨯ S)
+
+-- Weitere Abfragen: Lieferungen, Join und Operatorbaum
+-- Jede Abfrage einzeln markieren und mit "execute selection" ausführen
+
+-- 4. Projektion und Selektion auf Lieferungen
+-- 4a) Nur die Lieferantennummern, Duplikate entfallen (5 Tupel)
+π LiefNr (Lieferungen)
+-- 4b) Alle Lieferungen von Lieferant 3 (2 Tupel: 500003, 500004)
+σ LiefNr = 3 (Lieferungen)
+
+-- 5. Theta-Join
+-- 5a) Welcher Professor liest welche Vorlesung (4 Tupel)
+-- Logik fehlt, weil gelesenVon null ist;
+-- Kopernikus fehlt, weil er keine Vorlesung liest
+π p.Name, v.Titel (ρ p (Professoren)
+  ⨝ p.PersNr = v.gelesenVon ρ v (Vorlesungen))
+-- 5b) Dieselbe Anfrage in ASCII-Schreibweise
+pi p.Name, v.Titel (rho p (Professoren)
+  join p.PersNr = v.gelesenVon rho v (Vorlesungen))
+
+-- 6. Zwischenergebnisse mit Zuweisungen
+-- Alle vier Zeilen zusammen markieren; jede Zuweisung
+-- auf eigener Zeile, am Ende genau eine Abfrage
+p = ρ p (Professoren)
+v = ρ v (Vorlesungen)
+pv = p ⨝ p.PersNr = v.gelesenVon v
+π p.Name, v.Titel (pv)
+
+-- 7. naiver gegen optimierten Plan
+-- Naiv: erst Join, dann Selektion SWS = 4
+-- Optimiert: Selektion vor dem Join
+-- Unter dem Ergebnis zeigt RelaX jeweils den Operatorbaum
+-- Visualisierung: operatorbaum-naiv-vs-optimiert.svg
+
+-- 7a) Naiver Plan (3 Tupel)
+π p.Name, v.Titel (
+  σ v.SWS = 4 (
+    ρ p (Professoren)
+    ⨝ p.PersNr = v.gelesenVon
+    ρ v (Vorlesungen)))
+
+-- 7b) Optimierter Plan (3 Tupel)
+π p.Name, v.Titel (
+  ρ p (Professoren)
+  ⨝ p.PersNr = v.gelesenVon
+  σ SWS = 4 (ρ v (Vorlesungen)))
+
+-- 7c) Beide Pläne sind äquivalent: Differenz ist leer
+-- Von naiv bis naiv - optimiert alles markieren
+naiv = π p.Name, v.Titel (σ v.SWS = 4 (
+  ρ p (Professoren)
+  ⨝ p.PersNr = v.gelesenVon ρ v (Vorlesungen)))
+optimiert = π p.Name, v.Titel (
+  ρ p (Professoren)
+  ⨝ p.PersNr = v.gelesenVon
+  σ SWS = 4 (ρ v (Vorlesungen)))
+naiv - optimiert
+
+-- Erwartetes Ergebnis von 7a und 7b:
+-- Heinz, Funktionalanalysis
+-- Heinz, Wahrscheinlichkeitstheorie
+-- Oswald, Partielle DGL
