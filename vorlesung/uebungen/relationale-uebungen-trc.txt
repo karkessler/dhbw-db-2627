@@ -1,0 +1,53 @@
+-- Tupel-Relationalenkalkuel (TRC) zu den klassischen Basisaufgaben.
+-- Die Schreibweise ist mathematischer TRC. Im RelaX-TRC-Tab muessen
+-- bei der Ausgabe die einzelnen Attribute eines Tupels angegeben werden.
+--
+-- Sortierung, Aggregation und die aeusseren Join-Varianten gehoeren nicht
+-- zum klassischen TRC. Ihre SQL-Versionen stehen in
+-- relationale-uebungen-sql.sql.
+
+-- 1. Studenten ab dem 3. Semester
+{ s | Studenten(s) AND s.Semester >= 3 }
+
+-- 2. Namen aller Studenten
+{ <s.Name> | Studenten(s) }
+
+-- 3. Studenten im 3. bis 5. Semester
+{ s | Studenten(s) AND s.Semester >= 3 AND s.Semester <= 5 }
+
+-- 4. Studenten im 1. oder ab dem 5. Semester
+{ s | Studenten(s) AND (s.Semester = 1 OR s.Semester >= 5) }
+
+-- 5. Studenten, die nicht im 1. Semester sind
+{ s | Studenten(s) AND NOT (s.Semester = 1) }
+
+-- 5a. Studenten mit mehr als 3 Semestern
+{ s | Studenten(s) AND s.Semester > 3 }
+
+-- 5b. Studenten mit weniger als 3 Semestern
+{ s | Studenten(s) AND s.Semester < 3 }
+
+-- 5c. Studenten, die nicht im 1. Semester sind
+{ s | Studenten(s) AND s.Semester != 1 }
+
+-- 12. Namen der lesenden Professoren und Titel ihrer Vorlesungen
+{ <p.Name, v.Titel> |
+  Professoren(p) AND Vorlesungen(v) AND p.PersNr = v.gelesenVon
+}
+
+-- 17. Professoren, die mindestens eine Vorlesung lesen
+{ p | Professoren(p) AND EXISTS v (
+  Vorlesungen(v) AND v.gelesenVon = p.PersNr
+) }
+
+-- 19. Professoren, die keine Vorlesung lesen
+{ p | Professoren(p) AND NOT EXISTS v (
+  Vorlesungen(v) AND v.gelesenVon = p.PersNr
+) }
+
+-- 20. Professoren, die jede Vorlesung lesen
+{ p | Professoren(p) AND FOR ALL v (
+  Vorlesungen(v) IMPLIES EXISTS w (
+    Vorlesungen(w) AND w.gelesenVon = p.PersNr AND w.VorlNr = v.VorlNr
+  )
+) }

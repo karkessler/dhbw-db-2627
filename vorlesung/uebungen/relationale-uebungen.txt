@@ -1,0 +1,131 @@
+-- Übungen zur relationalen Algebra
+-- Jede Abfrage einzeln in RelaX ausführen.
+-- Benötigte Relationen: Studenten, Professoren, Vorlesungen und Assistenten.
+-- Gleichwertige SQL-Abfragen: relationale-uebungen-sql.sql
+-- Vergleichbare TRC-Abfragen: relationale-uebungen-trc.txt
+
+-- Selektion
+-- 1. Finde alle Studenten, die mindestens im 3. Semester sind.
+σ Semester >= 3 (Studenten)
+
+-- Projektion
+-- 2. Finde die Namen aller Studenten.
+π Name (Studenten)
+
+-- Selektion mit logischen Operatoren
+-- 3. Finde alle Studenten, die im 3. bis 5. Semester sind.
+σ Semester >= 3 ∧ Semester <= 5 (Studenten)
+
+-- 4. Finde alle Studenten, die im 1. oder mindestens im 5. Semester sind.
+σ Semester = 1 ∨ Semester >= 5 (Studenten)
+
+-- 5. Finde alle Studenten, die nicht im 1. Semester sind.
+σ ¬ (Semester = 1) (Studenten)
+
+-- 5a. Finde alle Studenten, die bereits mehr als 3 Semester studieren.
+σ Semester > 3 (Studenten)
+
+-- 5b. Finde alle Studenten, die weniger als 3 Semester studieren.
+σ Semester < 3 (Studenten)
+
+-- 5c. Finde alle Studenten, die nicht im 1. Semester sind.
+σ Semester ≠ 1 (Studenten)
+
+-- Umbenennung
+-- 6. Benenne die Relation Studenten in S um.
+ρ S (Studenten)
+
+-- 7. Benenne das Attribut gelesenVon in der Relation Vorlesungen in PersNr um.
+ρ PersNr ← gelesenVon (Vorlesungen)
+
+-- Kreuzprodukt
+-- 8. Kombiniere jeden Studenten mit jedem Professor.
+Studenten ⨯ Professoren
+
+-- Mengenoperationen
+-- 9. Finde alle Namen, die bei Professoren oder Assistenten vorkommen.
+π Name (Professoren) ∪ π Name (Assistenten)
+
+-- 10. Finde alle Namen, die sowohl bei Professoren als auch bei Assistenten vorkommen.
+-- Schnittmenge (INTERSECTION): R ∩ S = R - (R - S)
+π Name (Professoren) ∩ π Name (Assistenten)
+
+-- 11. Finde alle Namen von Professoren, die nicht bei Assistenten vorkommen.
+π Name (Professoren) - π Name (Assistenten)
+
+-- Joins
+-- 12. Finde zu jeder Vorlesung den Namen des lesenden Professors.
+-- Inner Join bzw. Theta-Join; mit "=" ist dies ein Equi-Join.
+-- Basisoperatoren: σ p.PersNr = v.gelesenVon (p ⨯ v)
+π p.Name, v.Titel (
+  ρ p (Professoren)
+  ⨝ p.PersNr = v.gelesenVon
+  ρ v (Vorlesungen))
+
+-- 13. Finde zu jeder Vorlesung den Namen des lesenden Professors mit einem Natural Join.
+-- Natural Join: impliziter Equi-Join über alle gleichnamigen Attribute.
+π Name, Titel (Professoren ⨝ ρ PersNr ← gelesenVon (Vorlesungen))
+
+-- 14. Finde alle Professoren, auch wenn sie keine Vorlesung lesen.
+-- Left Outer Join
+ρ p (Professoren) ⟕ p.PersNr = v.gelesenVon ρ v (Vorlesungen)
+
+-- 15. Finde alle Vorlesungen, auch wenn kein Professor zugeordnet ist.
+-- Right Outer Join
+ρ p (Professoren) ⟖ p.PersNr = v.gelesenVon ρ v (Vorlesungen)
+
+-- 16. Finde alle Professoren und Vorlesungen, auch wenn es keine Zuordnung gibt.
+-- Full Outer Join: Vereinigung aus Left und Right Outer Join.
+ρ p (Professoren) ⟗ p.PersNr = v.gelesenVon ρ v (Vorlesungen)
+
+-- 17. Finde Professoren, die mindestens eine Vorlesung lesen.
+-- Left Semi Join: gibt nur Tupel der linken Relation aus.
+Professoren ⋉ ρ PersNr ← gelesenVon (Vorlesungen)
+
+-- 18. Finde Vorlesungen, denen ein Professor zugeordnet ist.
+-- Right Semi Join: gibt nur Tupel der rechten Relation aus.
+Professoren ⋊ ρ PersNr ← gelesenVon (Vorlesungen)
+
+-- 19. Finde Professoren, die keine Vorlesung lesen.
+-- Anti Join: gibt die Tupel der linken Relation ohne Join-Partner aus.
+ρ p (Professoren) ▷ p.PersNr = v.gelesenVon ρ v (Vorlesungen)
+
+-- Division
+-- 20. Finde Personalnummern, die jede vorhandene Vorlesung lesen.
+-- Division: R(A, B) ÷ S(B) liefert die A-Werte, die mit allen B-Werten aus S vorkommen.
+π gelesenVon, VorlNr (Vorlesungen) ÷ π VorlNr (Vorlesungen)
+
+-- Erweiterte Operatoren
+-- 21. Sortiere Studenten absteigend nach ihrem Namen.
+τ Name desc (Studenten)
+
+-- 22. Zähle die Vorlesungen je Professor.
+γ gelesenVon; count(*) → Anzahl (Vorlesungen)
+
+-- Zuweisung
+-- 23. Gib die Namen der Professoren über eine benannte Zwischenrelation aus.
+-- Beide Zeilen zusammen markieren.
+professoren = π Name (Professoren)
+professoren
+
+-- TBABS:
+RA:
+π Name (σ Semester >= 3 (Studenten))
+Multimengenalgebra:
+π Name (σ Semester >= 3 (Studenten)) – gleiche Notation, aber gleiche Namen können mehrfach im Ergebnis erscheinen.
+TRC
+{ s.Name | Studenten(s) ∧ s.Semester >= 3 }
+SQL
+SELECT Name FROM Studenten WHERE Semester >= 3;
+
+Editor:
+group:Meine Uebungen
+description:Kleine Testdatenbank
+
+Studies = {MatrNr, Name, Semester
+  1, 'Anna', 12
+  2, 'Ben', 14
+  3, 'Clara', 15
+}
+
+σ Semester >= 14 (Studies)

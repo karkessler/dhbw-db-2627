@@ -24,7 +24,7 @@
 σ Semester = 5 (π Name (Studenten))
 
 -- 3. Kreuzprodukt
--- 3a) RK × S (2 · 4 = 8 Tupel, 5 Attribute)
+-- 3a) RK × S (2 · 4 = 8 Tupel, 5 Attribute)5
 RK ⨯ S
 -- 3b) Drei Relationen (2 · 2 · 2 = 8 Tupel)
 RK ⨯ T ⨯ U
